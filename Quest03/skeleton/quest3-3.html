@@ -46,6 +46,69 @@
 
 		<script>
 			/** TODO: 여기에 게임이 작동될 수 있도록 스크립트를 짜보세요  */
+			let result = null;
+
+			// 자릿수 입력여부 체크하기
+			const checkDigitNumber = () => {
+				let setDigitNum = document.querySelector('#setDigitNum').value;
+				let elRandA = document.querySelector('#randA');
+				let elRandB = document.querySelector('#randB');
+
+				// 랜덤값 지정 안했을때 
+				if (setDigitNum === ''){
+					getResultTxt('값을 입력해주세요');
+					return; 
+				}
+
+				// 랜덤값 지정범위 이외의 값을 입력했을 때
+				if (setDigitNum <= 0 || setDigitNum > 3){
+					getResultTxt('0부터 3이하의 숫자를 입력해주세요.');
+					return; 
+				}
+
+				// 자릿수 이상 없으면 랜덤숫자 지정
+				elRandA.innerHTML = getRandomNumber(setDigitNum);
+				elRandB.innerHTML = getRandomNumber(setDigitNum);
+
+				result = elRandA.innerHTML * elRandB.innerHTML;
+			}
+			
+			// 답이 맞는지 체크하기
+			const checkUserInput = () => {
+					let guessField = document.querySelector('#guessField').value;
+					if (result == guessField) {
+						getResultTxt('정답!')
+						// checkDigitNumber();
+					} else {
+						getResultTxt('오답 ㅠㅠ')
+					}
+			}
+
+			// 정답결과 보여주기
+			const getResultTxt = (text) => {
+				let resultArea = document.querySelector('.resultArea');
+				resultArea.innerHTML = `<span>${text}</span>`
+			}
+
+			// 랜덤숫자 지정하기
+			const getRandomNumber = (numberLength) => {
+				let minNum = (10 ** numberLength) / 10;
+				let maxNum = minNum * 10 - 1;
+
+				return Math.floor(Math.random() * (maxNum - minNum)) + minNum
+			}
+
+			
+			let setDigitSubmit = document.querySelector('.setDigitSubmit');
+			setDigitSubmit.addEventListener('click', () => {
+				checkDigitNumber()
+			})
+			
+			let guessSubmit = document.querySelector('.guessSubmit');
+			guessSubmit.addEventListener('click', () => {
+				checkUserInput();
+			})
+			
 		</script>
 	</body>
 </html>

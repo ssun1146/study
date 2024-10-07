@@ -63,6 +63,72 @@
 
 		<script>
 			/** TODO: 여기에 게임이 작동될 수 있도록 스크립트를 짜보세요  */
+			const choiceList = ['가위', '바위', '보'];
+			let gameResult = ''
+
+			// 랜덤으로 가위바위보 지정하기
+			const getGameResult = () => {
+					gameResult = choiceList.sort(() => Math.random() - 0.5)[0];
+			}
+
+			// 게임시작!
+			const startGame = (userInput) => {
+					if (gameResult === ''){
+						getMessageArea('게임시작을 눌러주세요!') 
+						return;
+					}
+
+					if (userInput === gameResult) { // 비겼을때
+						getMessageArea(`비겼습니다 || ${userInput}`)
+						getGameResult()
+						return;
+					}
+
+					let gameNumber = choiceList.indexOf(gameResult);
+					let userNumber = choiceList.indexOf(userInput);
+
+					// 
+					if ((gameNumber > userNumber) || (gameNumber === 0 && userNumber === 2)) {
+						getMessageArea(`졌다! || 결과: ${gameResult} 사용자: ${userInput}` )
+					} else {
+						getMessageArea(`이겼다! || 결과: ${gameResult} 사용자: ${userInput}` )
+					}
+					getGameResult()
+			}
+
+			let resultArea = document.querySelector('.resultArea');
+			const getMessageArea = (message) => {
+				const messageArea = document.createElement('p')
+				messageArea.innerHTML = `${message}`
+				resultArea.append(messageArea)
+			}
+			
+			let setPrsSubmit = document.querySelector('.setPrsSubmit')
+			setPrsSubmit.addEventListener('click', () => {
+					getGameResult();
+			})
+
+			let elementNameList = ['btnScissors', 'btnRock', 'btnPaper'];
+			elementNameList.forEach((element) => {
+				let el = document.querySelector(`.${element}`)
+				el.addEventListener('click', (e) => {
+					startGame(e.target.value)
+				})
+			})
+
+			// let btnScissors = document.querySelector('.btnScissors')
+			// btnScissors.addEventListener('click', (e) => {
+			// 	startGame(e.target.value)
+			// })
+			// let btnRock = document.querySelector('.btnRock')
+			// btnRock.addEventListener('click', (e) => {
+			// 	startGame(e.target.value)
+			// })
+			// let btnPaper = document.querySelector('.btnPaper')
+			// btnPaper.addEventListener('click', (e) => {
+			// 	startGame(e.target.value)
+			// })
+
 		</script>
 	</body>
 </html>

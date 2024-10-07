@@ -60,6 +60,111 @@
 			*/
 
 			/** TODO: 여기에 게임이 작동될 수 있도록 스크립트를 짜보세요  */
+				let result = ''
+				let guessField = document.querySelector('.guessField')
+
+				// 정답번호 만들기
+				const getResultNumber = () => {
+					if (result !== '') return; // result에 값이 있으면 리턴
+					resultArea.innerHTML = `` // 결과영역 비우기
+
+					let numberList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+					
+					for (let i = 0; i < 3; i++) {
+							let checkNum = numberList.splice(Math.floor(Math.random() * numberList.length), 1)[0]
+							result += checkNum
+					}
+					return result
+				}
+
+				// 정답확인 버튼을 눌렀을 때
+				const submitUserInput = () => {
+						if (result === '') {
+								getMessageArea('게임 시작을 눌러주세요!')
+						} else if (guessField.value === '') {
+								getMessageArea('값을 입력해주세요!')
+							} else {
+								userNumberCheck()
+						}
+				}
+
+				// 사용자가 입력한 번호 체크하고 화면에 그려주기
+				let userInputList = []
+				const userNumberCheck = () => {
+						let guessFieldValue = guessField.value
+						let gameResult = ''
+						let textNum = [0, 1, 2]	
+						let strikeArray = []
+						let ballCount = 0
+
+						// 9회 이후 게임이 진행되었을 때
+						if (userInputList.length === 9) {
+								getMessageArea('게임종료!')
+								return
+						}
+						
+						// 볼, 스트라이크 카운트 하기
+						const getResult = (userInput) => {	
+								for (let i = 0; i < 3; i++) {
+										if (result[i] === userInput[i]) {
+												strikeArray.push(i)
+										}
+								}
+								strikeArray.forEach((num) => {
+									let idx = textNum.indexOf(num);
+									if (idx !== -1) textNum.splice(idx, 1);
+								})
+
+								for (let i = 0; i < textNum.length; i++) {
+										for (let j = 0; j < textNum.length; j++) {
+												if (result[parseInt(textNum[i])] === userInput[parseInt(textNum[j])]) {
+														ballCount++
+												}
+										}
+								}
+						}
+						getResult(guessFieldValue)
+
+						// 게임 결과
+						if (strikeArray.length === 0 && ballCount === 0) {
+								gameResult = 'OUT!'
+						}
+						else if (strikeArray.length === 3) {
+								getMessageArea('게임 승리!')
+								gameResult = '3S0B'
+						} else {
+								gameResult = `${strikeArray.length}S${ballCount}B`
+						}
+
+						userInputList.push({
+								userInput: guessFieldValue,
+								result: gameResult,
+						})
+
+						let message = `${userInputList.length}회 : ${gameResult} || 입력: ${guessFieldValue}`
+						getMessageArea(message)
+				}
+				
+				// 화면에 결과 그려주기
+				let resultArea = document.querySelector('.resultArea');
+				const getMessageArea = (gameMessage) => {
+					const messageArea = document.createElement('p')
+					messageArea.innerHTML = `${gameMessage}`
+					resultArea.append(messageArea)
+				}
+
+				// 버튼 눌렀을 때 동작 실행
+				let setDigitSubmit = document.querySelector('.setDigitSubmit')
+				let guessSubmit = document.querySelector('.guessSubmit')
+
+				setDigitSubmit.addEventListener('click', () => {
+					getResultNumber()
+				})
+				guessSubmit.addEventListener('click', () => {
+					submitUserInput()
+				})
+
+
 		</script>
 	</body>
 </html>

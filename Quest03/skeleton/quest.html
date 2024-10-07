@@ -36,12 +36,27 @@
 			let row1Squares = document.querySelectorAll(".row1 .square");
 			for (let node of row1Squares) {
 				/* TODO: node 변수를 어떻게 조작해야 할까요? */
-				// ㅎㅎ
+				// 사각형의 박스들을 클릭할 때마다 배경색이 노란색↔흰색으로 토글되어야 합니다.
+				node.addEventListener('click', () => {
+					if (node.style.backgroundColor === '' || node.style.backgroundColor === '#fff' ){
+						node.style.backgroundColor = '#ff0';
+					} else {
+						node.style.backgroundColor = '#fff';
+					}
+				})
 			}
 
 			let row2Squares = document.querySelectorAll(".row2 .square");
 			for (let node of row2Squares) {
 				/* TODO: node 변수를 어떻게 조작해야 할까요? */
+				// 사각형의 박스들을 클릭할 때마다 enabled라는 이름의 CSS Class가 클릭된 DOM 노드에 추가되거나 제거되어야 합니다.
+				node.addEventListener('click', () => {
+					if (node.classList.contains('enabled')) {
+						node.classList.remove('enabled')
+					} else {
+						node.classList.add('enabled')
+					}
+				})
 			}
 		</script>
 	</body>

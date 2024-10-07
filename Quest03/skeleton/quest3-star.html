@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>별찍기</title>
+	</head>
+	<body>
+		<script>
+			const drawStar = () => {
+				let rowsCount = prompt('줄 수를 입력해주세요');
+
+				if (rowsCount < 1) return; 
+				for (let i = 1; i <= rowsCount; i++){
+					let blankNum = (rowsCount - i);
+					let starNum = 2 * i - 1;
+
+					let blankArea = ' '.repeat(blankNum);
+					let starArea = '*'.repeat(starNum);
+
+					console.log(blankArea + ' ' + starArea + ' ' + blankArea);
+				}
+			}		
+			drawStar();
+		</script>
+	</body>
+</html>
