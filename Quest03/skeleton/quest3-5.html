@@ -74,45 +74,48 @@
 			// 게임시작!
 			const startGame = (userInput) => {
 					if (gameResult === ''){
-						getMessageArea('게임시작을 눌러주세요!') 
+						updateMessageArea('게임시작을 눌러주세요!') 
 						return;
 					}
 
 					if (userInput === gameResult) { // 비겼을때
-						getMessageArea(`비겼습니다 || ${userInput}`)
+						updateMessageArea(`비겼습니다 || ${userInput}`)
 						getGameResult()
 						return;
 					}
 
-					let gameNumber = choiceList.indexOf(gameResult);
-					let userNumber = choiceList.indexOf(userInput);
+					let gameNumber = choiceList.indexOf(gameResult);	// 지정된 가위바위보 번호
+					let userNumber = choiceList.indexOf(userInput);		// 사용자가 낸 가위바위보 번호
 
-					// 
+					// 번호를 비교해서 졌을 때.
 					if ((gameNumber > userNumber) || (gameNumber === 0 && userNumber === 2)) {
-						getMessageArea(`졌다! || 결과: ${gameResult} 사용자: ${userInput}` )
+						updateMessageArea(`졌다! || 결과: ${gameResult} 사용자: ${userInput}` )
 					} else {
-						getMessageArea(`이겼다! || 결과: ${gameResult} 사용자: ${userInput}` )
+						updateMessageArea(`이겼다! || 결과: ${gameResult} 사용자: ${userInput}` )
 					}
 					getGameResult()
 			}
 
+			// 결과 부분 그리기
 			let resultArea = document.querySelector('.resultArea');
-			const getMessageArea = (message) => {
+			const updateMessageArea = (message) => {
 				const messageArea = document.createElement('p')
 				messageArea.innerHTML = `${message}`
 				resultArea.append(messageArea)
 			}
 			
+			// 시작버튼 눌렀을때 
 			let setPrsSubmit = document.querySelector('.setPrsSubmit')
 			setPrsSubmit.addEventListener('click', () => {
 					getGameResult();
 			})
 
+			// 가위바위보 버튼 눌렀을 때
 			let elementNameList = ['btnScissors', 'btnRock', 'btnPaper'];
 			elementNameList.forEach((element) => {
 				let el = document.querySelector(`.${element}`)
 				el.addEventListener('click', (e) => {
-					startGame(e.target.value)
+					startGame(e.target.value)  // value 전달
 				})
 			})
 
