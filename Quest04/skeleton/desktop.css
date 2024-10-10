@@ -1,1 +1,14 @@
 /* TODO: 자유롭게 바탕화면 시스템의 CSS를 만들어 보세요! */
+.desktop{position:relative; }
+.icon {display:block; padding:12px; box-sizing:border-box; }
+.icon__ico{width:36px; height:36px; border:1px solid #000; border-radius:50%; background-color:#d9d9ee; }
+.folder {display:block; padding:12px; box-sizing:border-box; }
+.folder__ico{width:36px; height:36px; border:1px solid #000; border-radius:8px; background-color:#eeeed9; }
+
+.window{display:block; position:absolute; width:400px; height:600px; border:1px solid #000; border-radius:12px; background:#fff; z-index:10; box-sizing:border-box; overflow:hidden; }
+.window__header{width:100%; height:40px; line-height:40px; padding:0 16px; background:#000; color:#fff; box-sizing:border-box;}
+.window__content{display:flex; justify-content:flex-start; align-items:flex-start; flex-wrap:wrap; flex-direction:column; width:100%; height:100%; padding:20px 24px; box-sizing:border-box;}
+
+.folder__wrap{position:absolute; top:0; left:0; width:200px; height:200px; border:1px solid #000; background:#fff; z-index:10; }
+.folder__header{width:100%; height:36px; line-height:36px; padding:0 16px; background:#77f; color:#fff; box-sizing:border-box;}
+.folder__content{height:100%; color:#999; text-align:center; }

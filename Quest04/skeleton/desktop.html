@@ -7,12 +7,27 @@
 	</head>
 	<body>
 		<section class="desktop">
+			<div class="wrap">
+				<div>
+					<label>폴더 갯수</label>
+					<input type="text" class="makeFolder" />
+				</div>
+				<div>
+					<label>아이콘 갯수</label>
+					<input type="text" class="makeIcon" />
+				</div>
+				<input type="submit" value="바탕화면 만들기" class="makeWindow" />
+			</div>
+			
 		</section>
 
 		<script>
-			let myDesktop = new Desktop(
-				/* TODO: myDesktop 인스턴스의 생성자의 변수로 무엇이 들어가야 할까요? */
-			);
+			let makeWindow = document.querySelector('.makeWindow')
+			let myDesktop = new Desktop('makeFolder', 'makeIcon');
+
+			makeWindow.addEventListener('click', () => {
+				myDesktop.updateWindowInfo();
+			})
 		</script>
 	</body>
 </html>
