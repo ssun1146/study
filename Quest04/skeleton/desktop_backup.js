@@ -6,17 +6,6 @@ class Desktop {
 	}
 
 	updateWindowInfo(){
-		// 입력값 정규식 확인
-		let numberCheck = /^[0-9]*$/;
-		if (numberCheck.test(this.folder.value) === false || numberCheck.test(this.icon.value) === false) {
-			alert('숫자를 입력해주세요')
-			return;
-		}
-		if (this.folder.value <= 0 || this.icon.value <= 0) {
-			alert('0 이상의 숫자를 입력해주세요.')
-			return;
-		}
-
 		let newWindow = new Window(this.folder.value, this.icon.value);
 		newWindow.createWindow()
 
@@ -37,11 +26,16 @@ class Icon {
 		let windowIconWrap = this.wrapperElement.children[1]
 
 		for (let i = 1; i <= this.iconCount; i++){
-			let iconUi = new uiControl(windowIconWrap).createIcon('icon', `파일 ${i}`)
+			const iconUi = document.createElement('div');
+			iconUi.classList.add('icon');
+			iconUi.innerHTML = `
+				<div class="icon__ico"></div>
+				<div class="icon__name">파일${i}</div>
+			`
 			windowIconWrap.append(iconUi);
 			
 			// 드래그 & 드롭 가능하게
-			new uiControl(iconUi).dragAndDrop();
+			new DragAndDrop(iconUi).dragAndDrop();
 		}
 	}
 }
@@ -54,10 +48,16 @@ class Folder {
 	}
 
 	getFolderList() {
+		// 부모의 자손한테 갈 수 있게 이동시켜줘야함.
 		let windowIconWrap = this.wrapperElement.children[1]
 
 		for (let i = 1; i <= this.folderCount; i++){
-			let folderUI = new uiControl(windowIconWrap).createIcon('folder', `폴더 ${i}`)
+			const folderUI = document.createElement('div');
+			folderUI.classList.add('folder');
+			folderUI.innerHTML = `
+				<div class="folder__ico"></div>
+				<div class="folder__name">폴더${i}</div>
+			`
 			windowIconWrap.append(folderUI);
 
 			// 더블클릭 시 폴더 UI 나오게 
@@ -66,12 +66,20 @@ class Folder {
 			})
 			
 			// 드래그 & 드롭 가능하게
-			new uiControl(folderUI).dragAndDrop();
+			new DragAndDrop(folderUI).dragAndDrop();
 		}
 	}
 	createFolderUI(i) {
-		let folderWindow = new uiControl(this.wrapperElement).createWindow(`폴더 ${i}`)
-		new uiControl(folderWindow).dragAndDrop();
+		const folderWindow = document.createElement('div');
+		folderWindow.classList.add('folder__wrap')
+		folderWindow.innerHTML = `
+			<div class="folder__header">폴더${i}</div>
+			<div class="folder__content">
+				이 폴더는 비어 있습니다
+			</div>
+		`
+		this.wrapperElement.append(folderWindow)
+		new DragAndDrop(folderWindow).dragAndDrop();
 	}
 }
 
@@ -84,15 +92,19 @@ class Window {
 
 	createWindow() {
 		let desktopEl = document.querySelector('.desktop');
-
-		// 바탕화면 UI 그리기
-		let windowElement = new uiControl(desktopEl).createWindow('바탕화면');
-
-		// 바탕화면 내 아이콘 생성하기
+		const windowElement = document.createElement('div');
+		windowElement.classList.add('window');
+		windowElement.innerHTML = `
+			<div class="window__header">바탕화면
+				<button class="btn-delete"></button>
+			</div>
+			<div class="window__content"></div>
+		`
+		desktopEl.append(windowElement);
 		this.createWindowContent(windowElement);
 
 		// 엘리먼트 드래그 & 드롭..?
-		new uiControl(windowElement).dragAndDrop();
+		new DragAndDrop(windowElement).dragAndDrop();
 	}
 
 	createWindowContent(element) {
@@ -102,9 +114,13 @@ class Window {
 		let iconList = new Icon(this.iconCount, element);
 		iconList.getIconList();
 	}
+	
+	deleteWindowContent() {
+
+	}
 }
 
-class uiControl {
+class DragAndDrop {
 	constructor(element) {
 		this.elementName = element;
 	}
@@ -135,45 +151,5 @@ class uiControl {
 			this.elementName.style.zIndex = '10';
 			isDragging = false;
 		});
-	}
-
-	createWindow(title) {
-		let parentArea = this.elementName;
-
-		const windowElement = document.createElement('div')
-		windowElement.classList.add('window')
-		windowElement.innerHTML = `
-			<div class="window__header">${title}
-				<button class="btn-delete"></button>
-			</div>
-			<div class="window__content"></div>
-		`
-		parentArea.append(windowElement);
-
-		// 삭제 버튼 클릭 시 삭제
-		let btnDelete = windowElement.children[0].children[0]
-		this.deleteWindow(btnDelete, windowElement);
-
-		return windowElement;
-	}
-
-	createIcon(className, title){
-		let parentArea = this.elementName;
-
-		const iconUi = document.createElement('div');
-		iconUi.classList.add(`${className}`);
-		iconUi.innerHTML = `
-			<div class="${className}__ico"></div>
-			<div class="${className}__name">${title}</div>
-		`
-		parentArea.append(iconUi);
-
-		return iconUi;
-	}
-	
-	deleteWindow(btnElement, parentElement){
-		btnElement.addEventListener('click', () => {
-			parentElement.remove()
-		})
 	}
 }
