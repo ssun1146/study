@@ -1,0 +1,4 @@
+.bingo__board{min-height:300px; }
+.bingo__board .row{display:flex; justify-content:flex-start; align-items:center; width:100%; gap:4px; margin-bottom:4px; }
+.bingo__board .col{display:flex; justify-content:center; align-items:center; gap:4px; width:50px; height:50px; border:1px solid #dfdfdf; border-radius:8px; background:#fff; }
+.bingo__board .col:hover{background:#fafafa; cursor:pointer; }

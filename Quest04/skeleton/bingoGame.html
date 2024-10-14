@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="./bingoGame.css">
+		<script src="./bingoGame.js"></script>
+	</head>
+	<body>
+
+	<div class="bingo__board">
+
+	</div>
+	<p class="bingo__message"> 게임 시작을 눌러주세요 </p>
+	<input type="submit" class="bingo__btn-start" value="게임시작" />
+
+	<div class="bingo__check">
+		<input type="text" class="bingo__input" />
+		<input type="submit" class="bingo__btn-submit" value="등록" />
+	</div>
+
+	<button class="test">테스트용</button>
+
+	<script>
+		let bingo = new bingoGame('bingo__board', 'bingo__input', 'bingo__message');
+
+		let startButton = document.querySelector('.bingo__btn-start')
+		startButton.addEventListener('click', () => {
+			bingo.createBingoGame()
+		})
+
+		let test = document.querySelector('.test')
+		test.addEventListener('click', () => {
+			bingo.checkUserInput()
+		})
+	</script>
+
+	</body>
+</html>
