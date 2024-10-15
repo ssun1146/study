@@ -18,7 +18,6 @@
 		<input type="submit" class="bingo__btn-submit" value="등록" />
 	</div>
 
-	<button class="test">테스트용</button>
 
 	<script>
 		let bingo = new bingoGame('bingo__board', 'bingo__input', 'bingo__message');
@@ -28,11 +27,14 @@
 			bingo.createBingoGame()
 		})
 
-		let test = document.querySelector('.test')
-		test.addEventListener('click', () => {
-			bingo.checkUserInput()
+		let submitButton = document.querySelector('.bingo__btn-submit')
+		submitButton.addEventListener('click', () => {
+			bingo.checkValue()
+			bingo.checkBingoLine(); // 완료전에 삭제하기 +_+
 		})
-	</script>
+
+
+</script>
 
 	</body>
 </html>
