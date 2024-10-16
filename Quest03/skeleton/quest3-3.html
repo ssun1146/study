@@ -46,7 +46,7 @@
 
 		<script>
 			/** TODO: 여기에 게임이 작동될 수 있도록 스크립트를 짜보세요  */
-			let result = null;
+			let result = 0;
 
 			// 자릿수 입력여부 체크하기
 			const checkDigitNumber = () => {
@@ -61,8 +61,8 @@
 				}
 
 				// 랜덤값 지정범위 이외의 값을 입력했을 때
-				if (setDigitNum <= 0 || setDigitNum > 3){
-					updateResultTxt('0부터 3이하의 숫자를 입력해주세요.');
+				if (isNaN(setDigitNum) || setDigitNum <= 0 || setDigitNum > 3){
+					updateResultTxt('1부터 3이하의 숫자를 입력해주세요.');
 					return; 
 				}
 
@@ -78,7 +78,12 @@
 					let guessField = document.querySelector('#guessField').value;
 					if (result == guessField) {
 						updateResultTxt('정답!')
-						// checkDigitNumber();
+
+						// 1초 뒤 다시 랜덤 숫자 지정하기
+						setTimeout(() => {
+							checkDigitNumber();
+						}, 1000)
+						
 					} else {
 						updateResultTxt('오답 ㅠㅠ')
 					}

@@ -9,11 +9,11 @@ class Desktop {
 		// 입력값 정규식 확인
 		let numberCheck = /^[0-9]*$/;
 		if (numberCheck.test(this.folder.value) === false || numberCheck.test(this.icon.value) === false) {
-			alert('숫자를 입력해주세요')
+			new uiControl().updateMsg('숫자를 입력해주세요')
 			return;
 		}
-		if (this.folder.value <= 0 || this.icon.value <= 0) {
-			alert('0 이상의 숫자를 입력해주세요.')
+		if (this.folder.value < 0 || this.icon.value < 0 || this.folder.value > 10 || this.icon.value > 10) {
+			new uiControl().updateMsg('1 부터 10사이의 숫자를 입력해주세요.')
 			return;
 		}
 
@@ -113,9 +113,8 @@ class uiControl {
 		let isDragging = false;
 		let offsetX = null
 		let offsetY = null
-		let dragArea = this.elementName.children[0] || this.elementName;
+		let dragArea = this.elementName.children[0] || this.elementName; // 창 영역 전체가 아니라, 아이콘 또는 상태표시줄 영역(?)을 클릭하면 드래그&드롭이 되도록 함.
 
-		// 창 영역 전체가 아니라, 아이콘 또는 상태표시줄 영역(?)을 클릭하면 드래그&드롭이 되도록 함.
 		dragArea.addEventListener("mousedown", (e) => {
 			isDragging = true;
 			offsetX = e.clientX - this.elementName.offsetLeft;
@@ -175,5 +174,10 @@ class uiControl {
 		btnElement.addEventListener('click', () => {
 			parentElement.remove()
 		})
+	}
+
+	updateMsg(msg){
+		let textMsg = document.querySelector('.text_msg')
+		textMsg.innerHTML = `${msg}`
 	}
 }

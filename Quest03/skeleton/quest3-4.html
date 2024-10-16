@@ -39,7 +39,7 @@
 		</div>
 
 		<div class="form" style="margin-top: 40px">
-			<input type="text" id="guessField" class="guessField" />
+			<input type="text" id="guessField" class="guessField" maxlength="3" />
 			<input type="submit" value="정답확인" class="guessSubmit" />
 		</div>
 
@@ -62,6 +62,7 @@
 			/** TODO: 여기에 게임이 작동될 수 있도록 스크립트를 짜보세요  */
 				let result = ''
 				let guessField = document.querySelector('.guessField')
+				let userInputList = []
 
 				// 정답번호 만들기
 				const getResultNumber = () => {
@@ -81,17 +82,24 @@
 				const submitUserInput = () => {
 						if (result === '') {
 								updateMessageArea('게임 시작을 눌러주세요!')
-						} else if (guessField.value === '') {
-								updateMessageArea('값을 입력해주세요!')
-							} else {
-								userNumberCheck()
+								return;
 						}
+						if (guessField.value === '') {
+								updateMessageArea('값을 입력해주세요!')
+								return;
+						}
+						if (isNaN(guessField)) {
+							updateMessageArea('숫자를 입력해주세요!')
+							return;
+						}
+						
+						// 숫자 값 확인하고 이상 없으면 함수 실행.
+						userNumberCheck()
 				}
-
+				
 				// 사용자가 입력한 번호 체크하고 화면에 그려주기
 				const userNumberCheck = () => {
 						let guessFieldValue = guessField.value
-						let userInputList = []
 						let gameResult = ''
 						let textNum = [0, 1, 2]	
 						let strikeArray = []
@@ -144,7 +152,7 @@
 								userInput: guessFieldValue,
 								result: gameResult,
 						})
-
+						console.log('userInputList', userInputList)
 						let message = `${userInputList.length}회 : ${gameResult} || 입력: ${guessFieldValue}`
 						updateMessageArea(message)
 				}
