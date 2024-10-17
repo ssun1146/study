@@ -4,3 +4,6 @@
 .bingo__board .col:hover{background:#fafafa; cursor:pointer; }
 .bingo__board .col__select{background:#e1e1e1; color:#999; cursor:default; }
 .bingo__board .col__select:hover{background:#e1e1e1; cursor:default; }
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { margin:0;-webkit-appearance:none;}
