@@ -1,9 +1,16 @@
 .bingo__board{min-height:300px; }
-.bingo__board .row{display:flex; justify-content:flex-start; align-items:center; width:100%; gap:4px; margin-bottom:4px; }
-.bingo__board .col{display:flex; justify-content:center; align-items:center; gap:4px; width:50px; height:50px; border:1px solid #dfdfdf; border-radius:8px; background:#fff; }
-.bingo__board .col:hover{background:#fafafa; cursor:pointer; }
-.bingo__board .col__select{background:#e1e1e1; color:#999; cursor:default; }
-.bingo__board .col__select:hover{background:#e1e1e1; cursor:default; }
+.row{display:flex; justify-content:flex-start; align-items:center; width:100%; gap:4px; margin-bottom:4px; }
+.col{display:flex; justify-content:center; align-items:center; gap:4px; width:50px; height:50px; border:1px solid #dfdfdf; border-radius:8px; background:#fff; text-align:center; }
+.col:hover{background:#fafafa; cursor:pointer; }
+.col__select{background:#e1e1e1; color:#999; cursor:default; }
+.col__select:hover{background:#e1e1e1; cursor:default; }
 
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button { margin:0;-webkit-appearance:none;}
+
+.wrap {display:flex; justify-content:space-between; align-items:center; width:700px; }
+.board{display:flex; justify-content:center; align-items:center; flex-direction:column; width:300px; }
+.board-user,
+.board-computer{position:relative; min-width:300px; min-height:300px; }
+
+.modal__none{position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; }

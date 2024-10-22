@@ -1,5 +1,5 @@
 /* TODO: 자유롭게 바탕화면 시스템의 CSS를 만들어 보세요! */
-.desktop{position:relative; }
+.desktop{position:relative; user-select:none; }
 .icon {display:block; padding:12px; box-sizing:border-box; }
 .icon__ico{width:36px; height:36px; border:1px solid #333; border-radius:50%; background-color:#d9d9ee; }
 .folder {display:block; padding:12px; box-sizing:border-box; }
@@ -19,6 +19,6 @@
 .window__header{position:relative; width:100%; height:40px; line-height:40px; padding:0 16px; background:#333; color:#fff; box-sizing:border-box; }
 .window__content{display:flex; justify-content:flex-start; align-items:flex-start; flex-wrap:wrap; flex-direction:column; width:100%; height:100%; padding:16px 20px; box-sizing:border-box; }
 
-.window .window{top:10px; left:10px; height:50%; max-height:200px; }
+.window .window{top:10px; left:10px; height:50%; max-height:200px; z-index:200; }
 .window .window .window__header{height:36px; line-height:36px; background:#77f; }
 .window .window .window__content{display:block; height:100%; font-size:13px; color:#999; text-align:center;}

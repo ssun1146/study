@@ -30,13 +30,13 @@
 		</li>
 		<div class="setDigitForm">
 			<label for="setDigitNum">자릿수를 설정해주세요: </label>
-			<input type="text" id="setDigitNum" class="setDigitNum" />
+			<input type="text" id="setDigitNum" class="setDigitNum" onkeyup="window.event.keyCode === 13 ? checkDigitNumber() : ''" />
 			<input type="submit" value="등록" class="setDigitSubmit" />
 		</div>
 
 		<div class="form" style="margin-top: 40px">
 			<span id="randA">랜덤값A</span> X <span id="randB">랜덤값B</span> =
-			<input type="text" id="guessField" class="guessField" />
+			<input type="text" id="guessField" class="guessField" onkeyup="window.event.keyCode === 13 ? checkUserInput() : ''" />
 			<input type="submit" value="정답확인" class="guessSubmit" />
 		</div>
 
@@ -47,20 +47,23 @@
 		<script>
 			/** TODO: 여기에 게임이 작동될 수 있도록 스크립트를 짜보세요  */
 			let result = 0;
+			let guessField = document.querySelector('#guessField')
 
-			// 자릿수 입력여부 체크하기
+			/**
+			 * 자릿수 입력여부 체크하기
+			 */
 			const checkDigitNumber = () => {
-				let setDigitNum = document.querySelector('#setDigitNum').value;
-				let elRandA = document.querySelector('#randA');
-				let elRandB = document.querySelector('#randB');
+				let setDigitNum = document.querySelector('#setDigitNum').value; // 자릿수 입력 input
+				let elRandA = document.querySelector('#randA'); // 숫자 A 
+				let elRandB = document.querySelector('#randB'); // 숫자 B
 
-				// 랜덤값 지정 안했을때 
+				// 자릿수 지정 안했을때 
 				if (setDigitNum === ''){
 					updateResultTxt('값을 입력해주세요');
 					return; 
 				}
 
-				// 랜덤값 지정범위 이외의 값을 입력했을 때
+				// 자릿수 지정범위 이외의 값을 입력했을 때
 				if (isNaN(setDigitNum) || setDigitNum <= 0 || setDigitNum > 3){
 					updateResultTxt('1부터 3이하의 숫자를 입력해주세요.');
 					return; 
@@ -70,13 +73,21 @@
 				elRandA.innerHTML = getRandomNumber(setDigitNum);
 				elRandB.innerHTML = getRandomNumber(setDigitNum);
 
+				// 랜덤 숫자 값을 정해서 정답 선언
 				result = elRandA.innerHTML * elRandB.innerHTML;
+
+				// 자릿 수 입력 후, 정답란으로 focus 이동
+				guessField.focus()
 			}
 			
-			// 답이 맞는지 체크하기
+			/**
+			 *  답이 맞는지 체크하기
+			 */
 			const checkUserInput = () => {
-					let guessField = document.querySelector('#guessField').value;
-					if (result == guessField) {
+					let guessFieldValue = guessField.value; // 사용자 입력 영역 입력값
+
+					// 정해진 답과, 사용자 입력값이 일치할 때
+					if (result == guessFieldValue) { 
 						updateResultTxt('정답!')
 
 						// 1초 뒤 다시 랜덤 숫자 지정하기
@@ -89,26 +100,33 @@
 					}
 			}
 
-			// 정답결과 보여주기
+			/**
+			 *  정답결과 보여주기
+			 *  @param {String} text - 보여줄 메시지
+			 */
 			const updateResultTxt = (text) => {
 				let resultArea = document.querySelector('.resultArea');
 				resultArea.innerHTML = `<span>${text}</span>`
 			}
 
-			// 랜덤숫자 지정하기
+			/**
+			 * 랜덤숫자 지정하기
+			 * @param {Number} numberLength - 자릿수
+			 */
 			const getRandomNumber = (numberLength) => {
-				let minNum = (10 ** numberLength) / 10;
-				let maxNum = minNum * 10 - 1;
+				let minNum = (10 ** numberLength) / 10;  // (10을 자릿수만큼 제곱근 / 10)
+				let maxNum = minNum * 10;
 
 				return Math.floor(Math.random() * (maxNum - minNum)) + minNum
 			}
-
 			
+			// 자리수를 설정해주세요 버튼을 클릭했을때.
 			let setDigitSubmit = document.querySelector('.setDigitSubmit');
 			setDigitSubmit.addEventListener('click', () => {
 				checkDigitNumber()
 			})
 			
+			// TODO: input 입력후 버튼 눌렀을 때 -> 이거 엔터키도 추가해놓기.
 			let guessSubmit = document.querySelector('.guessSubmit');
 			guessSubmit.addEventListener('click', () => {
 				checkUserInput();

@@ -110,31 +110,36 @@
 			const choiceList = ['0', '1', '2'];
 			let gameResult = ''
 
-			// 랜덤으로 가위바위보 지정하기
+			/**
+			 * 랜덤으로 가위바위보 지정하기
+			 */
 			const getGameResult = () => {
 					gameResult = choiceList.sort(() => Math.random() - 0.5)[0];
 			}
 
-			// 게임시작!
+			/**
+			 * 게임시작!
+			 * @param {String} userInput - 사용자가 입력한 value
+			 */
 			const startGame = (userInput) => {
-					if (gameResult === ''){
+					if (gameResult === ''){ // 결과 값이 없을 때
 						updateMessageArea('게임시작을 눌러주세요!') 
 						return;
 					}
 
-					if (userInput === gameResult) { // 비겼을때
+					if (userInput === gameResult) { // 사용자 입력값과, 결과가 같을 때
 						updateMessageArea(`비겼습니다`)
-						getGameResult()
+						getGameResult()  // 컴퓨터 가위바위보 랜덤 지정
 						return;
 					}
 
 					// 번호를 비교해서 졌을 때. -> 번호가 크거나, 사용자-보, 컴퓨터-가위
 					if ((gameResult > userInput) || (userInput === '2' && gameResult === '0')) {
-						updateMessageArea(`졌다! ` )
+						updateMessageArea(`졌다! `)
 					} else {
-						updateMessageArea(`이겼다!` )
+						updateMessageArea(`이겼다!`)
 					}
-					getGameResult()
+					getGameResult()  // 컴퓨터 가위바위보 랜덤 지정
 			}
 
 			// 결과 부분 그리기

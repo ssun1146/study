@@ -1,118 +1,212 @@
 class bingoGame {
-	constructor(boardClass, inputClass, messageClass){
-		this.boardElement = document.querySelector(`.${boardClass}`)
-		this.inputElement = document.querySelector(`.${inputClass}`)
-		this.messageElement = document.querySelector(`.${messageClass}`)
-
-		this.userBingo = []
-		this.computerBingo = []
+	constructor(isRandom){
+		this.messageElement = document.querySelector(`.bingo__message`)
+		this.userBingoElement = document.querySelector('.board-user'); // 사용자 빙고 UI
+		this.computerBingoElement = document.querySelector('.board-computer'); // 컴퓨터 빙고 UI
+		this.userBingoCol = ''; // 사용자 빙고 Input 한 칸
+		
+		this.isRandomBingo = isRandom; // 사용자가 랜덤 보드판을 가질지 아닐지
+		this.checkUserBingo = true;   // 사용자 빙고판에 문제가 없는지 (문제 없으면 true, 있으면 false)
+		this.userBingo = []	// 사용자 빙고판
+		this.computerBingo = [] // 컴퓨터 빙고판
+		this.isShowComputer = false; // 컴퓨터 빙고판 보이는지
 		
 		this.checkComputerIdx = [] 
+
 		this.isGameOver = false
 
-		// 1~25까지 숫자 array
-		this.numberArray = Array(25).fill().map((v, i) => i + 1); 
+		// 1~25까지 숫자 array - string으로 형변환 후 array에 저장
+		this.numberArray = Array(25).fill().map((v, i) => (i + 1).toString()); 
 	}
-
-	// 빙고 화면에 그리기 -> 나, 컴퓨터 빙고 array 만들기 1~25까지 숫자 랜덤으로 배치 후 5개씩 끊어서 빙고 array 생성
-	createBingoArray() {
-		let bingo = []
-
-		for (let i = 0; i < 2; i++) {
-			let tempArray = this.numberArray.slice();
-			let bingoArray = tempArray.sort(() => Math.random() - 0.5);
-			let bingoTable = []
-
-			for (let j = 0; j < 5; j++){
-				let bingoRow = bingoArray.splice(0, 5);
-				bingoTable.push(bingoRow)
-			}
-			bingo.push(bingoTable)
-		}
-		this.userBingo = bingo[0]
-		this.computerBingo = bingo[1]
-	}
-
-	// 게임 시작 버튼을 눌렀을 때
-	createBingoGame() {
+	
+	// 게임시작 버튼 - 사용자용 input array에 저장하기, 컴퓨터용 array 생성하기, 컴퓨터용 화면 그리기
+	// (사용자용 input array - 중복 숫자 없어야 함. 1~25이외의 숫자가 있으면 안됨)
+	// 컴퓨터용 화면은 toggle로 보일지 말지 선택하게 (기본값은 보이게 하기)
+	createBingoGame(isRandom){
+		
+		// 게임 초기화 추가하기 + 빙고 칸 비우기
+		this.isGameOver = false
+		this.showMessage('')
+		
 		// 게임이 시작 되었을 경우
 		if (this.userBingo[0] !== undefined) {
 			this.showMessage('게임이 진행중입니다!')
 			return;
 		}
+		
+		// 사용자가 랜덤 빙고를 선택하지 않았을 경우 
+		if (isRandom === false) { 
+			this.saveUserArray() // - 사용자가 입력한 빙고판 저장
+			this.checkUserArray(); // 사용자가 입력한 빙고판에 문제가 없는지 체크
 
-		// 메시지 영역 비우기, 빙고 array 생성해주기, 입력창 입력가능하게 하기
-		this.isGameOver = false
-		this.showMessage(' ')
-		this.createBingoArray();
-		this.inputElement.removeAttribute('disabled');
+			// 사용자가 입력한 빙고판에 문제가 있으면 - 사용자 빙고 클리어 / 이후 함수 진행하지 않음.
+			if (this.checkUserBingo === false) {  
+				this.userBingo = [];  
+				console.log(this.userBingo, '비워졌나')
+				return;
+			}
+		} else {
+			this.createBingo(this.userBingoElement, this.userBingo)
+		}
 
-		// 내꺼 화면그리기
+		// 컴퓨터 화면이 필요없어지면 주석 + HTML 삭제
+		this.createBingo(this.computerBingoElement, this.computerBingo)
+		this.showMessage('게임을 시작합니다!')
+
+		// 빙고 한칸 클릭 시 게임 동작 
+		this.userBingoCol = document.querySelectorAll('.board-user .col')
+		this.userBingoCol.forEach((col) => {
+			col.setAttribute('readonly', true)  // 게임 시작을 누른 후 수정할 수 없게 함.
+			col.addEventListener('click', (e) => {
+				this.bingoGameStart(e.target.value);
+			})
+		})
+	}
+
+	// 사용자 입력란에 있는 값 array에 저장하기
+	saveUserArray(){
+		let userBingoRow = this.userBingoElement.children;
+		for (let i = 0; i < 5; i++){
+			let row = userBingoRow[i]
+			let rowValue = []
+			for (let j = 0; j < 5; j++){
+				rowValue.push(row.children[j].value)
+			}
+			this.userBingo.push(rowValue)
+		}
+	}
+
+	// 사용자가 입력한 빙고칸 검사하기
+	checkUserArray() {	
+		let tempArray = []
+		for (let i = 0 ; i < 5; i++){
+			for (let j = 0; j < 5; j++){
+				tempArray.push(this.userBingo[i][j])
+			}
+		}
+
+		for (let i = 0; i < tempArray.length; i++){
+			let checkNumber = tempArray[i]
+
+			if (checkNumber === NaN || isNaN(checkNumber)){ // 숫자가 아닌 값이 왔을 때
+				this.showMessage('모든 칸에 숫자를 입력해주세요.')
+				this.checkUserBingo = false
+				return; 
+			}
+			if (checkNumber === '' || checkNumber === undefined) { // 빈칸이 있을 때
+				this.showMessage('빈칸을 확인해주세요.')
+				this.checkUserBingo = false
+				return;
+			} 
+			if (checkNumber < 1 || checkNumber > 25) { // 1~25 이외의 숫자를 만들었을 때
+				this.showMessage('1~25 사이의 숫자를 입력해주세요.')
+				this.checkUserBingo = false
+				return;
+			}
+
+			// tempArray에서 중복되는 숫자가 있는지 체크
+			let dupliArray = tempArray.slice();
+			dupliArray.splice(i, 1); 
+
+			for (let j = 0; j < dupliArray.length; j++){
+				if (checkNumber === dupliArray[j]) {
+					this.showMessage('중복된 숫자가 없는지 확인해주세요.')
+					this.checkUserBingo = false
+					return;
+				}
+			}
+		}
+
+		// 아무 문제 없으면 true
+		this.checkUserBingo = true;
+	}
+	
+	/**
+	 * 랜덤 빙고판 만들기 - 1~25까지 숫자를 랜덤으로 배치해서 화면에 그려줌
+	 * @param {String} element - 빙고판 UI wrapper 엘리먼트
+	 * @param {Array} array - 1~25까지 숫자를 랜덤으로 배치할 빙고판 (userBingo or ComputerBingo)
+	 */
+	createBingo(element, array) {
+		let tempArray = this.numberArray.slice();
+		let bingoArray = tempArray.sort(() => Math.random() - 0.5);
+
+		// 1~25까지 숫자를 이중배열에 저장
+		for (let j = 0; j < 5; j++){
+			let bingoRow = bingoArray.splice(0, 5);
+			array.push(bingoRow)
+		}
+
+		// 위에서 저장한 가지고 빙고 화면 그리기 - params로 받아온 부모 엘리먼트에 넣어줌.
+		let parentElement = element
+		
 		let wrapperElement = []
-		this.userBingo.forEach((row) => {
+		array.forEach((row) => {
 			let rowElement = []
 			rowElement.push('<div class="row">');
 			row.forEach((col) => {
 				rowElement.push(`
-					<div class="col">${col}</div>
+					<input type="text" class="col" value="${col}" readonly />
 				`)
 			})
 			rowElement.push('</div>')
 			wrapperElement.push(rowElement.join(''))
 		})
-		this.boardElement.innerHTML = wrapperElement.join('')
+		parentElement.innerHTML = wrapperElement.join('')
+		
+		// 컴퓨터 빙고는 클릭 못하게 방지 +_+
+		if (element === this.computerBingoElement){ 
+			this.isShowComputer = true; // 컴퓨터 빙고판 보이는지 체크
+
+			let modalBg = document.createElement('div')
+			modalBg.classList.add('modal__none')
+			parentElement.append(modalBg)
+		}
 	}
 
-	// TODO: 유효성 검사하기
-	// 입력값 체크하기
-	checkValue() {
-		let userValue = parseInt(this.inputElement.value);
-		if (userValue === '') {
-			this.showMessage('값을 입력해주세요')
-			return;
-		}
-		if (isNaN(userValue) || userValue < 1 || userValue > 25) {
-			this.showMessage('1부터 25 사이의 숫자를 입력해주세요')
-			return; 
-		}
-		if (this.userBingo[0] === undefined) {
-			this.showMessage('게임 시작!을 눌러주세요')
-			return;
-		}
-		// 입력한 숫자가 this.numberArray안에 없을 때
-		if (this.numberArray.includes(userValue) === false) {
-			this.showMessage('이미 선택된 숫자입니다. 다른 숫자를 입력해주세요')
-			return;
-		}
 
+	
+	/**
+	 * 입력값 체크 한 후 화면에 표시하기
+	 */
+	bingoGameStart(value) {
+		// 사용자가 입력한 값을 숫자로 변경
+		let userValue = value
+		
 		// 사용자가 입력한 값 확인, 화면에 표시, 컴퓨터 값을 받을때까지 입력 방지
 		this.checkBingoNumber(userValue, `사용자: ${userValue} || 컴퓨터의 선택을 기다려주세요.`)
-		this.inputElement.value = '';
-		this.inputElement.setAttribute('disabled', true);
 
 		// 게임이 종료하면 사용자는 입력 자체가 막히는데, 컴퓨터는 아래 함수를 실행하니까 조건 추가....
 		if (this.isGameOver === false){
 			// 사용자가 입력 한 후 1초 후에 컴퓨터가 부른값 표시, 확인 
 			setTimeout(() => {
-				this.inputElement.removeAttribute('disabled');
 				let computerValue = this.getComputerValue()
-				this.checkBingoNumber(computerValue, `컴퓨터: ${computerValue} || 다음 숫자를 입력해주세요.`)
+				this.checkBingoNumber(computerValue, `컴퓨터: ${computerValue} || 다음 숫자를 선택해주세요.`)
 			}, 1000)
 		}
 	}
 
-	// 빙고 값 확인 -> 확인된 번호는 0으로 변경 / 화면은 색상만 변경되게 
+	/**
+	 * 빙고 값 확인 -> 확인된 번호는 0으로 변경 / 화면은 색상만 변경되게 
+	 * @param {Number} value 
+	 * @param {String} message 
+	 */
 	checkBingoNumber(value, message){
+		
 		for (let i = 0 ; i < 5; i++) {
 			for (let j = 0; j < 5; j++) {
 				if (this.userBingo[i][j] === value){
 					this.userBingo[i][j] = 0
-					this.updateBingoBoard(i, j);
+					this.updateBingoBoard(this.userBingoElement, i, j);
 				}
-				if (this.computerBingo[i][j] === value){
+				if (this.computerBingo[i][j] == value){
 					this.checkComputerIdx = [] // 컴퓨터 빙고판에서는 어떤 idx를 갖는지 체크
 					this.computerBingo[i][j] = 0
 					this.checkComputerIdx.push(i, j)
+
+					// 컴퓨터 빙고판이 화면에 보여졌을때만 update 실행
+					if (this.isShowComputer === true){ 
+						this.updateBingoBoard(this.computerBingoElement, i, j);
+					}
 				}
 				this.showMessage(message);
 			}
@@ -125,7 +219,83 @@ class bingoGame {
 		this.checkBingoLine('컴퓨터', this.computerBingo)
 	}
 
-	// 컴퓨터가 부르는 값
+	/**
+	 * 화면에 값 변경해주기
+	 * @param {String} element - 부모 엘리먼트 
+	 * @param {Number} row - 빙고 row 번호
+	 * @param {Number} col - 빙고 col 번호
+	 */
+	updateBingoBoard(element, row, col){
+		let parentElement = element
+		let bingoRow = parentElement.children[row];
+		let bingoCol = bingoRow.children[col]
+		bingoCol.classList.add('col__select')
+	}
+
+	/**
+	 * 줄 수 체크하기 -> 승리조건 체크 - 가로 전부 0 or 세로 전부 0 or 대각선이 전부 0 
+	 * @param {String} player - 현재 게임중인 플레이어
+	 * @param {Array} bingoArray - 현재 게임중인 플레이어의 빙고판
+	 */
+	checkBingoLine(player, bingoArray){
+		// let horCountArray = [];
+		// let verCountArray = [];
+		let bingoLineCount = 0;  // 5개 이상이면 승리
+		
+		// 가로로 같을때
+		bingoArray.forEach((row) => {
+			let horCount = 0;
+			row.forEach((col) => {
+				if (col === 0) horCount++;
+			})
+			// horCountArray.push(horCount)
+			if (horCount === 5) bingoLineCount++;
+		})
+
+		// 세로로 같을때
+		for (let i = 0; i < bingoArray.length; i++){
+			let verCount = 0;
+			for (let j = 0; j < bingoArray.length; j++){
+				if (bingoArray[j][i] === 0) verCount++;
+			}
+			// verCountArray.push(verCount)
+			if (verCount === 5) bingoLineCount++;
+		}
+
+		// 대각선이 전부 같을 때
+		let tlToBrCount = 0; // 왼위 -> 오아 방향 대각선 카운트
+		let trToBlCount = 0; // 오위 -> 왼아 방향 대각선 카운트
+		for (let i = 0; i < bingoArray.length; i++){
+			
+			// 대각선 방향 카운트
+			if (bingoArray[i][i] === 0) tlToBrCount++;
+			if (bingoArray[i][4 - i] === 0) trToBlCount++;
+
+			// 대각선 각 방향 전부 체크되면 빙고 줄 수 증가
+			if (tlToBrCount === 5) bingoLineCount++
+			if (trToBlCount === 5) bingoLineCount++
+		}
+
+		// 줄 수가 5개가 되면 gameOver! 
+		if (bingoLineCount === 5) {
+			this.gameOver(player)
+		}
+
+		// 방법 1:: 컴퓨터 승률 너무 떨어져서 주석처리 
+		// let result = {
+		// 	verCount: verCountArray,
+		// 	horCount: horCountArray,
+		// 	tlToBrCount: [tlToBrCount],
+		// 	trToBlCount: [trToBlCount]
+		// }
+		// return result; 
+	}
+
+	
+	/**
+	 * 컴퓨터가 부르는 값 확인하기
+	 * @returns computerValues 
+	 */
 	getComputerValue(){
 		let computerValue; // 컴퓨터가 부르는 값
 		let computerNumberArray = [] // 컴퓨터가 가질 수 있는 값
@@ -180,105 +350,34 @@ class bingoGame {
 		// }
 		// return computerValue;
 
-			// 방법2:: 마지막으로 부른 숫자 기준 가로, 세로, 대각선 한칸씩 떨어져있는 숫자를 뽑음.
-			let computerX = this.checkComputerIdx[0]
-			let computerY = this.checkComputerIdx[1]
-			for (let i = 0; i < 3; i++){
-				for (let j = 0; j < 3; j++){
-					if (computerX + i - 1 === -1 || computerX + i - 1 === 5 || computerY + j - 1 === -1 || computerY + j - 1 === 5) {
-						continue;
-					}
-					let tempNumber = this.computerBingo[computerX + i - 1][computerY + j - 1]
-					if (tempNumber !== undefined && tempNumber !== 0) {
-						computerNumberArray.push(tempNumber)
-					}
-				}
-			}
-
-			if (computerNumberArray.length > 0) {
-				computerValue = computerNumberArray[Math.floor(Math.random() * computerNumberArray.length)]
-			} else {
-				computerNumberArray = this.numberArray.slice();
-				computerValue = computerNumberArray.sort(() => 0.5 - Math.random())[0]
-			}
-
-			return computerValue;
-	}
-
-	// 화면에 값 변경해주기.
-	updateBingoBoard(row, col){
-		let bingoRow = document.getElementsByClassName('row')[row];
-		let bingoCol = bingoRow.children[col]
-		bingoCol.classList.add('col__select')
-	}
-
-	// 줄 수 체크하기 -> 승리조건 체크 - 가로 전부 0 or 세로 전부 0 or 대각선이 전부 0 
-	checkBingoLine(player, bingoArray){
-		let horCountArray = [];
-		let verCountArray = [];
-		let bingoLineCount = 0;  // 5개 이상이면 승리
-		
-		// 가로로 같을때
-		bingoArray.forEach((row) => {
-			let horCount = 0;
-			row.forEach((col) => {
-				if (col === 0) horCount++;
-			})
-			horCountArray.push(horCount)
-			if (horCount === 5) bingoLineCount++;
-		})
-
-		// 세로로 같을때
-		for (let i = 0; i < bingoArray.length; i++){
-			let verCount = 0;
-			for (let j = 0; j < bingoArray.length; j++){
-				if (bingoArray[j][i] === 0) verCount++;
-			}
-			verCountArray.push(verCount)
-			if (verCount === 5) bingoLineCount++;
-		}
-
-		// 대각선이 전부 같을 때
-		let tlToBrCount = 0; // 왼위 -> 오아 방향 대각선 카운트
-		let trToBlCount = 0; // 오위 -> 왼아 방향 대각선 카운트
-		for (let i = 0; i < bingoArray.length; i++){
-			
-			// 대각선 방향 카운트
-			if (bingoArray[i][i] === 0) tlToBrCount++;
-			if (bingoArray[i][4 - i] === 0) trToBlCount++;
-
-			// 대각선 각 방향 전부 체크되면 빙고 줄 수 증가
-			if (tlToBrCount === 5) bingoLineCount++
-			if (trToBlCount === 5) bingoLineCount++
-		}
-
-		// 줄 수가 5개가 되면 gameOver! 
-		if (bingoLineCount === 5) {
-			this.gameOver(player)
-		}
-
-		// 방법 1:: 컴퓨터 승률 너무 떨어져서 주석처리 
-		// let result = {
-		// 	verCount: verCountArray,
-		// 	horCount: horCountArray,
-		// 	tlToBrCount: [tlToBrCount],
-		// 	trToBlCount: [trToBlCount]
+		// if (computerNumberArray.length > 0) {
+		// 	computerValue = computerNumberArray[Math.floor(Math.random() * computerNumberArray.length)]
+		// } else {
+			computerNumberArray = this.numberArray.slice();
+			computerValue = computerNumberArray.sort(() => 0.5 - Math.random())[0]
 		// }
-		// return result; 
+
+		return computerValue;
 	}
 
-	// 게임종료
+
+	/**
+	 * 게임종료
+	 * @param {String} player 
+	 */
 	gameOver(player){
 		this.isGameOver = true;
 
 		this.showMessage(`게임이 종료되었습니다. :: ${player} 승리!`)
-		this.inputElement.setAttribute('disabled', true); // 입력방지
 		this.numberArray = Array(25).fill().map((v, i) => i + 1); 
 
 		// 빙고판 리셋
 		this.userBingo = []
 		this.computerBingo = []
 	}
+
+
+
 
 	// 메시지 그려야징
 	showMessage(message){

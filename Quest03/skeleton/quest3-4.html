@@ -39,7 +39,7 @@
 		</div>
 
 		<div class="form" style="margin-top: 40px">
-			<input type="text" id="guessField" class="guessField" maxlength="3" />
+			<input type="text" id="guessField" class="guessField" maxlength="3" onkeyup="window.event.keyCode === 13 ? submitUserInput() : ''" />
 			<input type="submit" value="정답확인" class="guessSubmit" />
 		</div>
 
@@ -60,46 +60,61 @@
 			*/
 
 			/** TODO: 여기에 게임이 작동될 수 있도록 스크립트를 짜보세요  */
+				
+				let guessField = document.querySelector('.guessField')	// 사용자 입력 input
 				let result = ''
-				let guessField = document.querySelector('.guessField')
 				let userInputList = []
+				let isGameOver = false;
 
-				// 정답번호 만들기
+				/**
+				 * 정답번호 만들기
+				 */
 				const getResultNumber = () => {
 					if (result !== '') return; // result에 값이 있으면 리턴
-					resultArea.innerHTML = `` // 결과영역 비우기
+					isGameOver = false // 게임종료 상태 리셋
 
+					// numberList에서 한개씩 숫자 뽑은후 array에서 삭제 -> 뽑은 숫자는 result에 추가 (3번반복)
 					let numberList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-					
 					for (let i = 0; i < 3; i++) {
 							let checkNum = numberList.splice(Math.floor(Math.random() * numberList.length), 1)[0]
 							result += checkNum
 					}
+					
 					return result
 				}
 
-				// 정답확인 버튼을 눌렀을 때
+				/**
+				 * 정답확인 버튼을 눌렀을 때
+				 */
 				const submitUserInput = () => {
-						if (result === '') {
+						if (result === '') { // 결과 숫자 없을 때
 								updateMessageArea('게임 시작을 눌러주세요!')
 								return;
 						}
-						if (guessField.value === '') {
+						if (guessField.value === '') { // 값을 입력 하지 않았을 때
 								updateMessageArea('값을 입력해주세요!')
 								return;
 						}
-						if (isNaN(guessField)) {
+						if (!isNaN(guessField)) { // 숫자가 아닌 값을 입력햇을때
 							updateMessageArea('숫자를 입력해주세요!')
 							return;
 						}
+						if (isGameOver === true) { // 게임이 종료 되었을 때
+							updateMessageArea('게임이 종료되었습니다! 게임 시작을 눌러주세요')
+							return;
+						}
 						
-						// 숫자 값 확인하고 이상 없으면 함수 실행.
+						// 숫자 값 확인하고 이상 없으면 정답체크 함수 실행.
 						userNumberCheck()
+						guessField.value = ``	 // 결과영역 비우기
+						guessField.focus()
 				}
 				
-				// 사용자가 입력한 번호 체크하고 화면에 그려주기
+				/**
+				 * 사용자가 입력한 번호 체크하고 화면에 그려주기
+				 */
 				const userNumberCheck = () => {
-						let guessFieldValue = guessField.value
+						let guessFieldValue = guessField.value  // 정답 입력 input
 						let gameResult = ''
 						let textNum = [0, 1, 2]	
 						let strikeArray = []
@@ -107,7 +122,8 @@
 
 						// 9회 이후 게임이 진행되었을 때
 						if (userInputList.length === 9) {
-								updateMessageArea('게임종료!')
+								updateMessageArea(`게임종료! 정답은 ${result} 였습니다!`)
+								isGameOver = true
 								return
 						}
 						
@@ -143,16 +159,18 @@
 						}
 						else if (strikeArray.length === 3) {
 								updateMessageArea('게임 승리!')
+								isGameOver = true;
 								gameResult = '3S0B'
 						} else {
 								gameResult = `${strikeArray.length}S${ballCount}B`
 						}
 
+						// 사용자가 입력한 값 기록 
 						userInputList.push({
 								userInput: guessFieldValue,
 								result: gameResult,
 						})
-						console.log('userInputList', userInputList)
+						
 						let message = `${userInputList.length}회 : ${gameResult} || 입력: ${guessFieldValue}`
 						updateMessageArea(message)
 				}

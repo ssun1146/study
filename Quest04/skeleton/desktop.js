@@ -5,14 +5,27 @@ class Desktop {
 		this.icon = document.querySelector(`.${iconClass}`)
 	}
 
+	/**
+	 * 바탕화면에 그릴 폴더갯수, 아이콘 개수를 확인
+	 */
 	updateWindowInfo(){
-		// 입력값 정규식 확인
+		// 입력값 정규식 확인 
+		// ^ - 한줄만 체크 (여러줄 체크 시 /gm 을 맨 뒤에 붙여주는 것 같음)
+		// * - 없거나 (여러개) 있거나
+		// /g 를 맨 끝에 - 모두 찾는다
+		// & - 특정 문자열로 끝이남
 		let numberCheck = /^[0-9]*$/;
-		if (numberCheck.test(this.folder.value) === false || numberCheck.test(this.icon.value) === false) {
+		if ( // 정규식 체크 - 숫자가 아닌 값을 입력할 때
+				numberCheck.test(this.folder.value) === false || 
+				numberCheck.test(this.icon.value) === false
+			) {
 			new uiControl().updateMsg('숫자를 입력해주세요')
 			return;
 		}
-		if (this.folder.value < 0 || this.icon.value < 0 || this.folder.value > 10 || this.icon.value > 10) {
+		if ( // 아이콘 갯수를 1~10 사이가 아닌 숫자를 입력했을 때
+				this.folder.value < 1 || this.folder.value > 10 || 
+				this.icon.value < 1 || this.icon.value > 10
+			) {
 			new uiControl().updateMsg('1 부터 10사이의 숫자를 입력해주세요.')
 			return;
 		}
@@ -107,6 +120,7 @@ class Window {
 class uiControl {
 	constructor(element) {
 		this.elementName = element;
+		this.zIndexAdd = 20;
 	}
 
 	dragAndDrop() {
@@ -124,16 +138,17 @@ class uiControl {
 		document.addEventListener("mousemove", (e) => {
 			if (isDragging) {
 				this.elementName.style.position = 'absolute';
-				this.elementName.style.zIndex = '20'; // 클릭한 요소가 가장 위에 보일 수 있게 z-index 수정(..? 다른 방법 읎나)
+				this.elementName.style.zIndex = this.zIndexAdd; 
 				this.elementName.style.left = `${e.clientX - offsetX}px`;
 				this.elementName.style.top = `${e.clientY - offsetY}px`;
 			}
 		});
 		
 		document.addEventListener("mouseup", () => {
-			this.elementName.style.zIndex = '10';
 			isDragging = false;
 		});
+
+		this.zIndexAdd += 10
 	}
 
 	createWindow(title) {
