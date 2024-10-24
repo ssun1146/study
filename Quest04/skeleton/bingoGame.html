@@ -6,63 +6,74 @@
 		<script src="./bingoGame.js"></script>
 	</head>
 	<body>
-		<p class="bingo__message"> 1~25사이 숫자를 빈칸에 입력한 후 게임 시작을 눌러주세요 </p>
-		<div class="wrap">
-			<div class="board">
-				<div class="board__title">내꺼 +_+</div>
-				<div class="board-user">
-					<div class="row">
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-					</div>
-					<div class="row">
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-					</div>
-					<div class="row">
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-					</div>
-					<div class="row">
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-					</div>
-					<div class="row">
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
-						<input type="text" class="col" />
+		<div class="bingo">
+			<p class="bingo__message"> 1~25사이 숫자를 빈칸에 입력한 후 입력완료 버튼을 눌러주세요 </p>
+			<div class="wrap">
+				<div class="board">
+					<div class="board__title">내꺼 +_+</div>
+					<div class="board-user">
+						<div class="row">
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+						</div>
+						<div class="row">
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+						</div>
+						<div class="row">
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+						</div>
+						<div class="row">
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+						</div>
+						<div class="row">
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+							<input type="text" class="col" />
+						</div>
+						<div class="modal__none"></div>
 					</div>
 				</div>
+				<div class="board">
+					<div class="board__title">컴퓨터 빙고판</div>
+					<div class="board-computer"></div>
+				</div>
 			</div>
-			<div class="board">
-				<div class="board__title">컴퓨터 빙고판</div>
-				<div class="board-computer"></div>
+			<div class="bottom">
+				<button class="btn-game_start">입력완료</button>
+				<button class="btn-random">랜덤 빙고 만들기</button>
+			</div>
+			<div class="gamer">
+				<div class="modal__black"></div>
+				<div class="gamer__wrap">
+					<h4>선공 결정하기 - 버튼을 선택해주세요. </h4>
+					<div class="gamer__btn"></div>
+					<div class="gamer__result"></div>
+				</div>
 			</div>
 		</div>
-		<div class="bottom">
-			<button class="btn-game_start">게임 시작</button>
-			<button class="btn-random">랜덤 빙고 만들기</button>
-		</div>
+		
 	</body>
 
 	<script>
 		let isBingoRandom = false
 		let bingo = new bingoGame(isBingoRandom);
-
 
 		let startBingoGame = document.querySelector('.btn-game_start');
 		startBingoGame.addEventListener('click', () => {
